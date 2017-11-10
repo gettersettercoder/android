@@ -1,0 +1,7 @@
+public interface Myclick {
+
+    void onLoveClick(View view,int position);
+
+
+
+}

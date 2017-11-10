@@ -1,0 +1,81 @@
+public class TestTusday extends AppCompatActivity {
+
+
+    RecyclerView recyclerView;
+    Button movetomapactivity;
+
+    List<Datum> keysValuesOfDatas = new ArrayList<>();
+
+    private Responsedata responsedata;
+    MyAdapterone myValuesAdapter;
+
+    public interface getdata{
+
+        @GET("dealsnownew/index.php/webservice/select_business_categorywise?device_id=54ef6c5c34a0bccf&city_id=783&latitude=&longitude=&category_id_array=1,4,8,9,10&user_id=89&offset=0")
+        Call<ParentClass> responsedata();
+    }
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        movetomapactivity=(Button)findViewById(R.id.movetomapactivity);
+        recyclerView = (RecyclerView) findViewById(R.id.recycleview_activity_main);
+        RecyclerView.LayoutManager manager = new LinearLayoutManager(getApplicationContext());
+        recyclerView.setLayoutManager(manager);
+
+        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        OkHttpClient.Builder builder = new OkHttpClient.Builder();
+        builder.addInterceptor(interceptor);
+        builder.connectTimeout(5000, TimeUnit.MILLISECONDS);
+        Retrofit retrofit = new Retrofit.Builder().baseUrl("http://cmexpertiseinfotech.in/").addConverterFactory(GsonConverterFactory.create()).client(builder.build()).build();
+        final TestTusday.getdata getdatfromserver = retrofit.create(TestTusday.getdata.class);
+        Call<ParentClass> obj = getdatfromserver.responsedata();
+
+        obj.enqueue(new Callback<ParentClass>() {
+            @Override
+            public void onResponse(Call<ParentClass> call, final Response<ParentClass> response) {
+
+//
+
+
+                responsedata = response.body().getResponsedata();
+                keysValuesOfDatas = responsedata.getData();
+
+                movetomapactivity.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent intent1=new Intent(TestTusday.this,MapsActivity.class);
+                        intent1.putExtra("xyz",responsedata);
+                        startActivity(intent1);
+                    }
+                });
+//
+//                String sd = keysValuesOfDatas.get(0).getName();
+//                Log.d("edwe", "(" + sd + ")");
+//
+//
+//
+//
+                myValuesAdapter = new MyAdapterone(keysValuesOfDatas, new Myclick() {
+                    @Override
+                    public void onLoveClick(View view, int position) {
+                        Intent intent=new Intent(TestTusday.this,ViewAll.class);
+                        intent.putExtra("bussinessname",keysValuesOfDatas.get(position).getBusinessName());
+                        intent.putExtra("shivam",keysValuesOfDatas.get(position));
+                        startActivity(intent);
+                    }
+                });
+                recyclerView.setAdapter(myValuesAdapter);
+            }
+
+            @Override
+            public void onFailure(Call<ParentClass> call, Throwable t) {
+                t.printStackTrace();
+            }
+        });
+
+    }
+}
+

@@ -1,0 +1,17 @@
+public class ViewAll extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.otherdata);
+
+        Intent intent=getIntent();
+
+       String name=  intent.getStringExtra("bussinessname");
+       Datum obj = (Datum) intent.getSerializableExtra("shivam");
+        String dv=obj.getBusinessImage();
+        Log.d("Hello--",dv);
+
+        Log.d("Hello--",name);
+    }
+}
